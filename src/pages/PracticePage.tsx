@@ -82,6 +82,35 @@ const PracticePage = () => {
     }
   }, [status, endDialogShown]);
 
+  // 监听空格键触发下一题
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 只在练习进行中且可以导航时响应
+      if (!isRunning || !canNavigate) return;
+      
+      // 如果焦点在输入框或弹窗中，不响应
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable ||
+        configOpen ||
+        endDialogOpen
+      ) {
+        return;
+      }
+
+      // 空格键触发下一题
+      if (e.code === 'Space' && canGoNext) {
+        e.preventDefault();
+        handleNextQuestion();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isRunning, canNavigate, canGoNext, configOpen, endDialogOpen, handleNextQuestion]);
+
   const generateDefaultName = () => {
     const now = new Date();
     const templateName = activeTemplate?.name ?? '练习';
