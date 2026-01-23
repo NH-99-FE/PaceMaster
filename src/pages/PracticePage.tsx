@@ -255,6 +255,7 @@ const PracticePage = () => {
               orderedItems={orderedItems}
               activeIndex={activeIndex}
               skips={skips}
+              questionTimes={questionTimes}
               hasItems={hasItems}
               onSelectQuestion={handleSelectQuestion}
               onJumpType={actions.jumpTo}

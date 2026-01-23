@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Check, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +19,7 @@ type PracticeAnswerSheetProps = {
   orderedItems: PracticeItem[];
   activeIndex: number;
   skips: number[];
+  questionTimes: Record<number, number>;
   hasItems: boolean;
   onSelectQuestion: (questionNumber: number) => void;
   onJumpType: (index: number) => void;
@@ -30,6 +32,7 @@ export const PracticeAnswerSheet = ({
   orderedItems,
   activeIndex,
   skips,
+  questionTimes,
   hasItems,
   onSelectQuestion,
   onJumpType,
@@ -101,6 +104,7 @@ export const PracticeAnswerSheet = ({
                     {group.questions.map(item => {
                       const isSelected = currentQuestion === item.number;
                       const isSkipped = skippedSet.has(item.number);
+                      const hasAnswered = (questionTimes[item.number] ?? 0) > 0;
                       // 只高亮当前题号，其余题号保持轻量状态提示。
                       return (
                         <button
@@ -108,16 +112,25 @@ export const PracticeAnswerSheet = ({
                           type="button"
                           onClick={() => onSelectQuestion(item.number)}
                           className={[
-                            'flex h-8 items-center justify-center rounded border text-xs transition-colors',
+                            'relative flex h-8 items-center justify-center rounded border text-xs transition-colors',
                             'border-border text-foreground hover:border-muted-foreground/40 hover:bg-muted/30',
                             isSelected
                               ? 'border-primary bg-primary/10 text-primary ring-primary/60 ring-2'
                               : '',
                             isSkipped ? 'opacity-70' : '',
                           ].join(' ')}
-                          title={`${item.label} · 第 ${item.number} 题`}
+                          title={`${item.label} · 第 ${item.number} 题${isSkipped ? ' · 已跳过' : hasAnswered ? ' · 已作答' : ''}`}
                         >
                           {item.number}
+                          {!isSelected && (
+                            <>
+                              {isSkipped ? (
+                                <AlertCircle className="text-accent absolute right-0.5 top-0.5 h-3 w-3 stroke-[2.5]" />
+                              ) : hasAnswered ? (
+                                <Check className="text-primary absolute right-0.5 top-0.5 h-3 w-3 stroke-[3]" />
+                              ) : null}
+                            </>
+                          )}
                         </button>
                       );
                     })}
