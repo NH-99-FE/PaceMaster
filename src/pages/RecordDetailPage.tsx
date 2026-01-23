@@ -98,6 +98,14 @@ const RecordDetailPage = () => {
     }));
   }, [state.questionGrid, state.questionRecords, state.orderedItems]);
 
+  const questionTimeMap = useMemo(() => {
+    const timeMap: Record<number, number> = {};
+    state.questionRecords.forEach(record => {
+      timeMap[record.questionIndex] = record.actualTimeMs;
+    });
+    return timeMap;
+  }, [state.questionRecords]);
+
   if (!id) {
     return (
       <div className="border-border bg-card text-muted-foreground rounded-lg border p-6 text-center text-sm">
@@ -262,6 +270,7 @@ const RecordDetailPage = () => {
         <ReviewQuestionGrid
           questionGrid={state.questionGrid}
           questionStatus={state.questionStatus}
+          questionTimes={questionTimeMap}
           onApplyStatus={applyActiveStatus}
         />
       </div>

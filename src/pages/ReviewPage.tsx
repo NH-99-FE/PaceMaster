@@ -19,6 +19,7 @@ const ReviewPage = () => {
     totalQuestions,
     plannedTotalMs,
     timers,
+    questionTimes,
     questionStatus,
     counts,
     accuracyRate,
@@ -27,6 +28,8 @@ const ReviewPage = () => {
     isSaving,
     setActiveStatus,
     applyActiveStatus,
+    markAllCorrect,
+    clearAll,
     saveReview,
   } = useReviewSession();
 
@@ -102,7 +105,10 @@ const ReviewPage = () => {
         <ReviewQuestionGrid
           questionGrid={questionGrid}
           questionStatus={questionStatus}
+          questionTimes={questionTimes}
           onApplyStatus={applyActiveStatus}
+          onMarkAllCorrect={markAllCorrect}
+          onClearAll={clearAll}
         />
       </div>
     </div>

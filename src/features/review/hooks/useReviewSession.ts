@@ -175,6 +175,22 @@ export const useReviewSession = () => {
     setQuestionResult(questionNumber, activeStatus);
   };
 
+  const markAllCorrect = () => {
+    const updated: Record<number, QuestionStatus> = {};
+    questionGrid.forEach(item => {
+      updated[item.number] = 'correct';
+    });
+    setQuestionStatus(updated);
+  };
+
+  const clearAll = () => {
+    const updated: Record<number, QuestionStatus> = {};
+    questionGrid.forEach(item => {
+      updated[item.number] = DEFAULT_STATUS;
+    });
+    setQuestionStatus(updated);
+  };
+
   const saveReview = async () => {
     if (!activeTemplate || orderedItems.length === 0) return null;
     setIsSaving(true);
@@ -267,6 +283,7 @@ export const useReviewSession = () => {
     totalQuestions,
     plannedTotalMs,
     timers,
+    questionTimes,
     questionStatus,
     counts,
     accuracyRate,
@@ -276,6 +293,8 @@ export const useReviewSession = () => {
     setActiveStatus,
     setQuestionResult,
     applyActiveStatus,
+    markAllCorrect,
+    clearAll,
     saveReview,
   };
 };
