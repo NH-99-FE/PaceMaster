@@ -1,0 +1,144 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 220 84% 56%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 174 79% 40%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 220 84% 56%;
+  --chart-1: var(--primary);
+  --chart-2: var(--accent);
+  --chart-3: 38 92% 50%;
+  --chart-4: 199 89% 48%;
+  --chart-5: 347 77% 50%;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 222 47% 11%;
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 210 40% 96%;
+  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: var(--ring);
+}
+
+.dark {
+  --background: 223 39% 7%;
+  --foreground: 214 32% 91%;
+  --card: 222 36% 11%;
+  --card-foreground: 214 32% 91%;
+  --popover: 222 36% 11%;
+  --popover-foreground: 214 32% 91%;
+  --primary: 220 84% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 223 24% 15%;
+  --secondary-foreground: 214 32% 91%;
+  --muted: 223 24% 15%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 174 79% 45%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 75% 52%;
+  --border: 218 31% 20%;
+  --input: 218 31% 20%;
+  --ring: 220 84% 60%;
+  --chart-1: var(--primary);
+  --chart-2: var(--accent);
+  --chart-3: 38 92% 50%;
+  --chart-4: 199 89% 48%;
+  --chart-5: 347 77% 50%;
+  --sidebar: 222 36% 11%;
+  --sidebar-foreground: 214 32% 91%;
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 223 24% 15%;
+  --sidebar-accent-foreground: 214 32% 91%;
+  --sidebar-border: 218 31% 20%;
+  --sidebar-ring: var(--ring);
+}
+
+:root[data-color='azure'] {
+  --primary: 220 84% 56%;
+  --accent: 174 79% 40%;
+  --ring: 220 84% 56%;
+}
+
+:root[data-color='citrus'] {
+  --primary: 38 92% 50%;
+  --accent: 199 89% 48%;
+  --ring: 38 92% 50%;
+}
+
+:root[data-color='slate'] {
+  --primary: 215 25% 27%;
+  --accent: 215 16% 47%;
+  --ring: 215 25% 27%;
+}
+
+:root[data-color='rose'] {
+  --primary: 347 77% 50%;
+  --accent: 25 95% 53%;
+  --ring: 347 77% 50%;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
