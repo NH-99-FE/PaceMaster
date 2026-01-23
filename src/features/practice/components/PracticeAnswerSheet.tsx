@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,6 +43,35 @@ export const PracticeAnswerSheet = ({
     }
   });
 
+  // 按题型分组
+  const groupedQuestions = useMemo(() => {
+    const groups: Array<{
+      label: string;
+      questions: QuestionGridItem[];
+    }> = [];
+    
+    let currentLabel = '';
+    let currentGroup: QuestionGridItem[] = [];
+    
+    questionGrid.forEach(item => {
+      if (item.label !== currentLabel) {
+        if (currentGroup.length > 0) {
+          groups.push({ label: currentLabel, questions: currentGroup });
+        }
+        currentLabel = item.label;
+        currentGroup = [item];
+      } else {
+        currentGroup.push(item);
+      }
+    });
+    
+    if (currentGroup.length > 0) {
+      groups.push({ label: currentLabel, questions: currentGroup });
+    }
+    
+    return groups;
+  }, [questionGrid]);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -61,30 +91,39 @@ export const PracticeAnswerSheet = ({
         <div className="space-y-3 px-4 pb-4">
           <div className="space-y-2">
             <p className="text-sm font-medium">题目网格</p>
-            <div className="grid grid-cols-6 gap-2 sm:grid-cols-8 md:grid-cols-10">
-              {questionGrid.map(item => {
-                const isSelected = currentQuestion === item.number;
-                const isSkipped = skippedSet.has(item.number);
-                // 只高亮当前题号，其余题号保持轻量状态提示。
-                return (
-                  <button
-                    key={`q-${item.number}`}
-                    type="button"
-                    onClick={() => onSelectQuestion(item.number)}
-                    className={[
-                      'flex h-8 items-center justify-center rounded border text-xs transition-colors',
-                      'border-border text-foreground hover:border-muted-foreground/40 hover:bg-muted/30',
-                      isSelected
-                        ? 'border-primary bg-primary/10 text-primary ring-primary/60 ring-2'
-                        : '',
-                      isSkipped ? 'opacity-70' : '',
-                    ].join(' ')}
-                    title={`${item.label} · 第 ${item.number} 题`}
-                  >
-                    {item.number}
-                  </button>
-                );
-              })}
+            <div className="space-y-4">
+              {groupedQuestions.map((group, groupIndex) => (
+                <div key={`group-${groupIndex}`} className="space-y-2">
+                  <div className="text-muted-foreground text-xs font-medium">
+                    {group.label}
+                  </div>
+                  <div className="grid grid-cols-6 gap-2 sm:grid-cols-8 md:grid-cols-10">
+                    {group.questions.map(item => {
+                      const isSelected = currentQuestion === item.number;
+                      const isSkipped = skippedSet.has(item.number);
+                      // 只高亮当前题号，其余题号保持轻量状态提示。
+                      return (
+                        <button
+                          key={`q-${item.number}`}
+                          type="button"
+                          onClick={() => onSelectQuestion(item.number)}
+                          className={[
+                            'flex h-8 items-center justify-center rounded border text-xs transition-colors',
+                            'border-border text-foreground hover:border-muted-foreground/40 hover:bg-muted/30',
+                            isSelected
+                              ? 'border-primary bg-primary/10 text-primary ring-primary/60 ring-2'
+                              : '',
+                            isSkipped ? 'opacity-70' : '',
+                          ].join(' ')}
+                          title={`${item.label} · 第 ${item.number} 题`}
+                        >
+                          {item.number}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
