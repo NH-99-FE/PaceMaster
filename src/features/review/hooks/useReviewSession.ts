@@ -191,7 +191,7 @@ export const useReviewSession = () => {
     setQuestionStatus(updated);
   };
 
-  const saveReview = async (existingSessionId?: string) => {
+  const saveReview = async (existingSessionId?: string, sessionName?: string) => {
     if (!activeTemplate || orderedItems.length === 0) return null;
     setIsSaving(true);
     try {
@@ -202,6 +202,7 @@ export const useReviewSession = () => {
 
       const session: Session = {
         id: sessionId,
+        name: sessionName,
         mode,
         templateId: activeTemplate.id,
         customOrder: order,

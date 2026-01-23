@@ -8,6 +8,7 @@ type RecordCounts = Record<QuestionStatus, number>;
 export type ReviewRecord = {
   id: string;
   mode: Mode;
+  name: string;
   templateName: string;
   endedAt?: string;
   totalTimeMs: number;
@@ -69,10 +70,14 @@ export const useRecords = () => {
           const completionRate =
             totalQuestions > 0 ? answeredCount / totalQuestions : 0;
 
+          const templateName = templateMap.get(session.templateId) ?? '未命名模板';
+          const displayName = session.name || templateName;
+
           return {
             id: session.id,
             mode: session.mode,
-            templateName: templateMap.get(session.templateId) ?? '未命名模板',
+            name: displayName,
+            templateName,
             endedAt: session.endedAt,
             totalTimeMs: session.totalTimeMs,
             totalQuestions,

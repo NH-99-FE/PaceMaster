@@ -8,6 +8,7 @@ import { ReviewQuestionGrid } from '@/features/review/components/ReviewQuestionG
 import { ReviewStatusPicker } from '@/features/review/components/ReviewStatusPicker';
 import { ReviewSummary } from '@/features/review/components/ReviewSummary';
 import { useReviewSession } from '@/features/review/hooks/useReviewSession';
+import { formatDateTime } from '@/utils/time';
 
 const ReviewPage = () => {
   const navigate = useNavigate();
@@ -35,7 +36,8 @@ const ReviewPage = () => {
 
   const handleSave = async () => {
     try {
-      const sessionId = await saveReview(savedSessionId ?? undefined);
+      const sessionName = savedSessionId ? undefined : generateDefaultName();
+      const sessionId = await saveReview(savedSessionId ?? undefined, sessionName);
       if (sessionId) {
         setSavedSessionId(sessionId);
         toast.success(savedSessionId ? '复盘已更新' : '复盘已保存');
@@ -45,6 +47,12 @@ const ReviewPage = () => {
     } catch {
       toast.error('保存失败，请稍后重试');
     }
+  };
+
+  const generateDefaultName = () => {
+    const now = new Date();
+    const templateName = activeTemplate?.name ?? '练习';
+    return `${templateName} - ${formatDateTime(now.toISOString())}`;
   };
 
   return (

@@ -40,6 +40,7 @@ export interface TemplateItem {
 
 export interface Session {
   id: string;
+  name?: string;
   mode: Mode;
   templateId: string;
   customOrder: string[];

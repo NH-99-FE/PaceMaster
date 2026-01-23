@@ -98,7 +98,7 @@ const RecordsPage = () => {
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-medium">
-                        {record.templateName}
+                        {record.name}
                       </span>
                       <Badge
                         variant={
