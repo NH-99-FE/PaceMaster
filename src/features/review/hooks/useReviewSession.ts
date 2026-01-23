@@ -191,11 +191,11 @@ export const useReviewSession = () => {
     setQuestionStatus(updated);
   };
 
-  const saveReview = async () => {
+  const saveReview = async (existingSessionId?: string) => {
     if (!activeTemplate || orderedItems.length === 0) return null;
     setIsSaving(true);
     try {
-      const sessionId = crypto.randomUUID();
+      const sessionId = existingSessionId ?? crypto.randomUUID();
       const now = new Date().toISOString();
       const startedAtMs =
         typeof startedAt === 'number' ? startedAt : Date.now() - timers.totalMs;

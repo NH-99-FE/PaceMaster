@@ -35,10 +35,10 @@ const ReviewPage = () => {
 
   const handleSave = async () => {
     try {
-      const sessionId = await saveReview();
+      const sessionId = await saveReview(savedSessionId ?? undefined);
       if (sessionId) {
         setSavedSessionId(sessionId);
-        toast.success('复盘已保存');
+        toast.success(savedSessionId ? '复盘已更新' : '复盘已保存');
       } else {
         toast.error('保存失败，请检查题目与模板设置');
       }
@@ -66,11 +66,11 @@ const ReviewPage = () => {
           </Button>
           <Button
             onClick={handleSave}
-            disabled={isSaving || totalQuestions === 0 || !!savedSessionId}
+            disabled={isSaving || totalQuestions === 0}
             className="relative"
           >
             <span className={isSaving ? 'opacity-0' : ''}>
-              {savedSessionId ? '已保存' : '保存复盘'}
+              {savedSessionId ? '更新复盘' : '保存复盘'}
             </span>
             {isSaving && (
               <Loader2 className="absolute top-1/2 left-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 animate-spin" />
