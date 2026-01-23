@@ -185,6 +185,28 @@ export const useRecordDetail = (sessionId?: string) => {
     }));
   };
 
+  const markAllCorrect = () => {
+    const nextStatus: Record<number, QuestionStatus> = {};
+    questionGrid.forEach(item => {
+      nextStatus[item.number] = 'correct';
+    });
+    setState(prev => ({
+      ...prev,
+      questionStatus: nextStatus,
+    }));
+  };
+
+  const clearAll = () => {
+    const nextStatus: Record<number, QuestionStatus> = {};
+    questionGrid.forEach(item => {
+      nextStatus[item.number] = DEFAULT_STATUS;
+    });
+    setState(prev => ({
+      ...prev,
+      questionStatus: nextStatus,
+    }));
+  };
+
   // 保存题号状态修改（更新 question_records）。
   const saveChanges = async () => {
     if (!state.session) return false;
@@ -248,6 +270,8 @@ export const useRecordDetail = (sessionId?: string) => {
     setActiveStatus,
     applyActiveStatus,
     setQuestionStatus,
+    markAllCorrect,
+    clearAll,
     saveChanges,
     deleteRecord,
   };

@@ -38,6 +38,8 @@ const RecordDetailPage = () => {
     activeStatus,
     setActiveStatus,
     applyActiveStatus,
+    markAllCorrect,
+    clearAll,
     saveChanges,
     deleteRecord,
   } = useRecordDetail(id);
@@ -272,6 +274,8 @@ const RecordDetailPage = () => {
           questionStatus={state.questionStatus}
           questionTimes={questionTimeMap}
           onApplyStatus={applyActiveStatus}
+          onMarkAllCorrect={markAllCorrect}
+          onClearAll={clearAll}
         />
       </div>
     </div>
