@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Check, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,7 @@ type PracticeAnswerSheetProps = {
   skips: number[];
   questionTimes: Record<number, number>;
   hasItems: boolean;
+  isRunning: boolean;
   onSelectQuestion: (questionNumber: number) => void;
   onJumpType: (index: number) => void;
 };
@@ -34,9 +35,12 @@ export const PracticeAnswerSheet = ({
   skips,
   questionTimes,
   hasItems,
+  isRunning,
   onSelectQuestion,
   onJumpType,
 }: PracticeAnswerSheetProps) => {
+  const [open, setOpen] = useState(false);
+  
   // 根据题号跳过状态计算题型标记。
   const skippedSet = new Set(skips);
   const skippedTypeIds = new Set<string>();
@@ -45,6 +49,22 @@ export const PracticeAnswerSheet = ({
       skippedTypeIds.add(item.templateItemId);
     }
   });
+
+  const handleSelectQuestion = (questionNumber: number) => {
+    onSelectQuestion(questionNumber);
+    // 只在计时过程中自动关闭抽屉
+    if (isRunning) {
+      setOpen(false);
+    }
+  };
+
+  const handleJumpType = (index: number) => {
+    onJumpType(index);
+    // 只在计时过程中自动关闭抽屉
+    if (isRunning) {
+      setOpen(false);
+    }
+  };
 
   // 按题型分组
   const groupedQuestions = useMemo(() => {
@@ -76,7 +96,7 @@ export const PracticeAnswerSheet = ({
   }, [questionGrid]);
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" disabled={!hasItems}>
           答题卡
@@ -110,7 +130,7 @@ export const PracticeAnswerSheet = ({
                         <button
                           key={`q-${item.number}`}
                           type="button"
-                          onClick={() => onSelectQuestion(item.number)}
+                          onClick={() => handleSelectQuestion(item.number)}
                           className={[
                             'relative flex h-8 items-center justify-center rounded border text-xs transition-colors',
                             'border-border text-foreground hover:border-muted-foreground/40 hover:bg-muted/30',
@@ -144,7 +164,7 @@ export const PracticeAnswerSheet = ({
             <button
               key={item.id}
               type="button"
-              onClick={() => onJumpType(index)}
+              onClick={() => handleJumpType(index)}
               className={[
                 'flex w-full items-center justify-between rounded-md border px-3 py-2 text-left text-sm transition-colors',
                 index === activeIndex

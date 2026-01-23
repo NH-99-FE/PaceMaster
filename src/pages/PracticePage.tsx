@@ -286,6 +286,7 @@ const PracticePage = () => {
               skips={skips}
               questionTimes={questionTimes}
               hasItems={hasItems}
+              isRunning={isRunning}
               onSelectQuestion={handleSelectQuestion}
               onJumpType={actions.jumpTo}
             />
