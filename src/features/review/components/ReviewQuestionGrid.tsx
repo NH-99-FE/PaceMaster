@@ -5,13 +5,13 @@ import { formatDuration } from '@/utils/time';
 const getStatusClass = (status: QuestionStatus) => {
   switch (status) {
     case 'correct':
-      return 'border-emerald-500/50 bg-emerald-500/15 text-emerald-600';
+      return 'border-emerald-500/50 bg-emerald-500/15 text-emerald-600 hover:border-emerald-500/70 hover:bg-emerald-500/25';
     case 'wrong':
-      return 'border-rose-500/50 bg-rose-500/15 text-rose-600';
+      return 'border-rose-500/50 bg-rose-500/15 text-rose-600 hover:border-rose-500/70 hover:bg-rose-500/25';
     case 'skip':
-      return 'border-amber-500/50 bg-amber-500/15 text-amber-600';
+      return 'border-amber-500/50 bg-amber-500/15 text-amber-600 hover:border-amber-500/70 hover:bg-amber-500/25';
     default:
-      return 'border-border text-foreground';
+      return 'border-border text-foreground hover:border-primary/50 hover:bg-primary/5';
   }
 };
 
@@ -72,7 +72,6 @@ export const ReviewQuestionGrid = ({
             onClick={() => onApplyStatus(item.number)}
             className={[
               'flex h-12 flex-col items-center justify-center rounded border py-1 text-xs transition-colors',
-              'hover:border-primary/50 hover:bg-primary/5',
               getStatusClass(status),
             ].join(' ')}
             title={`${item.label} · 第 ${item.number} 题${hasTime ? ` · ${formatDuration(timeMs)}` : ''}`}
