@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +12,7 @@ import { PracticeTimerPanel } from '@/features/practice/components/PracticeTimer
 import { usePracticeSession } from '@/features/practice/hooks/usePracticeSession';
 import { sessionRepo } from '@/db/repositories/sessionRepo';
 import { formatDateTime } from '@/utils/time';
-import { useSessionQuestionTimes, useSessionStartedAt } from '@/store/selectors';
+import { useSessionQuestionTimes, useSessionStartedAt, useSessionEndDialogShown } from '@/store/selectors';
 import type { Session, SessionItem, QuestionRecord } from '@/types';
 
 const PracticePage = () => {
@@ -54,10 +54,10 @@ const PracticePage = () => {
   const navigate = useNavigate();
   const questionTimes = useSessionQuestionTimes();
   const startedAt = useSessionStartedAt();
+  const endDialogShown = useSessionEndDialogShown();
   const [restoreDismissed, setRestoreDismissed] = useState(false);
   const [configOpen, setConfigOpen] = useState(false);
   const [endDialogOpen, setEndDialogOpen] = useState(false);
-  const endDialogShownRef = useRef(false);
   const shouldInitializeRestore = status === 'running' && timers.totalMs > 0;
   const [hasRestorePrompt, setHasRestorePrompt] = useState(
     shouldInitializeRestore
@@ -73,18 +73,14 @@ const PracticePage = () => {
     actions.reset();
     setHasRestorePrompt(false);
     setRestoreDismissed(true);
-    endDialogShownRef.current = false;
   };
 
-  // 当练习结束时自动弹出命名弹窗
+  // 当练习结束时自动弹出命名弹窗（只在未显示过时弹出）
   useEffect(() => {
-    if (status === 'ended' && !endDialogShownRef.current) {
-      endDialogShownRef.current = true;
+    if (status === 'ended' && !endDialogShown) {
       queueMicrotask(() => setEndDialogOpen(true));
-    } else if (status !== 'ended') {
-      endDialogShownRef.current = false;
     }
-  }, [status]);
+  }, [status, endDialogShown]);
 
   const generateDefaultName = () => {
     const now = new Date();
@@ -174,8 +170,7 @@ const PracticePage = () => {
       await sessionRepo.appendQuestionRecords(records);
 
       setEndDialogOpen(false);
-      // 保存成功后重置练习状态，防止弹窗再次出现
-      actions.reset();
+      actions.markEndDialogShown();
       toast.success('练习记录已保存');
     } catch (error) {
       console.error('保存失败:', error);
@@ -185,8 +180,7 @@ const PracticePage = () => {
 
   const handleCancelSave = () => {
     setEndDialogOpen(false);
-    // 取消保存也要重置，防止弹窗再次出现
-    actions.reset();
+    actions.markEndDialogShown();
   };
 
   // 页面只做布局与拼装，业务逻辑集中在 features。

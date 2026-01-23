@@ -14,6 +14,7 @@ export type SessionSliceState = {
   skippedQuestions: number[];
   questionTimes: Record<number, number>;
   currentQuestionNumber?: number;
+  endDialogShown: boolean;
 };
 
 export type SessionSliceActions = {
@@ -32,6 +33,7 @@ export type SessionSliceActions = {
   skip: (questionNumber: number) => void;
   end: () => void;
   reset: () => void;
+  markEndDialogShown: () => void;
 };
 
 export type SessionSlice = {
@@ -54,6 +56,7 @@ const initialState: SessionSliceState = {
   skippedQuestions: [],
   questionTimes: {},
   currentQuestionNumber: undefined,
+  endDialogShown: false,
 };
 
 export const createSessionSlice: StateCreator<
@@ -174,6 +177,10 @@ export const createSessionSlice: StateCreator<
             mode: currentMode,
             actions: state.session.actions,
           };
+        }),
+      markEndDialogShown: () =>
+        set(state => {
+          state.session.endDialogShown = true;
         }),
     },
   },
