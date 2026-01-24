@@ -140,7 +140,14 @@ const RecordDetailPage = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">复盘详情</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-semibold">复盘详情</h1>
+            {state.session?.name && (
+              <span className="text-muted-foreground font-normal text-sm">
+                · {state.session.name}
+              </span>
+            )}
+          </div>
           <p className="text-muted-foreground text-sm">
             {state.session?.endedAt
               ? formatDateTime(state.session.endedAt)

@@ -116,32 +116,36 @@ const RecordsPage = () => {
                   onClick={() => navigate(`/records/${record.id}`)}
                   className="border-border hover:border-primary/40 hover:bg-primary/5 flex w-full cursor-pointer flex-col gap-2 rounded-md border px-3 py-2 text-left transition-colors md:flex-row md:items-center md:justify-between group"
                 >
-                  <div className="space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-medium">
-                        {record.name}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={e => handleEditClick(e, record)}
-                        className="text-muted-foreground hover:text-foreground shrink-0 p-1 opacity-100 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100"
-                        title="重命名"
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </button>
-                      <Badge
-                        variant={
-                          record.mode === 'practice' ? 'secondary' : 'outline'
-                        }
-                        className="text-[10px]"
-                      >
-                        {record.mode === 'practice' ? '练习' : '模拟'}
-                      </Badge>
-                      <span className="text-muted-foreground text-xs">
-                        {record.endedAt
-                          ? formatDateTime(record.endedAt)
-                          : '未记录时间'}
-                      </span>
+                  <div className="w-full space-y-1 md:w-auto">
+                    <div className="flex items-center justify-between gap-2 md:justify-start">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-sm font-medium truncate max-w-[10em] md:max-w-[8em] lg:max-w-[15em]">
+                          {record.name}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={e => handleEditClick(e, record)}
+                          className="text-muted-foreground hover:text-foreground shrink-0 p-1 opacity-100 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100"
+                          title="重命名"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Badge
+                          variant={
+                            record.mode === 'practice' ? 'secondary' : 'outline'
+                          }
+                          className="text-[10px]"
+                        >
+                          {record.mode === 'practice' ? '练习' : '模拟'}
+                        </Badge>
+                        <span className="text-muted-foreground text-xs">
+                          {record.endedAt
+                            ? formatDateTime(record.endedAt)
+                            : '未记录时间'}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
