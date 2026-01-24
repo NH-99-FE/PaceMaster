@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![PaceMaster Logo](public/logo.svg)
+<img src="public/logo.svg" alt="PaceMaster Logo" width="32" height="32">
 
 **高效的考试节奏训练与管理工具**
 
@@ -90,6 +90,7 @@ src/
 ### 状态管理
 
 采用 Zustand + Immer 的 Slice 模式，将状态按功能模块划分为：
+
 - `sessionSlice` - 会话状态与计时逻辑
 - `templateSlice` - 模板与题型管理
 - `statsSlice` - 统计数据
@@ -106,6 +107,17 @@ src/
 
 使用 `performance.now()` 配合 200ms 间隔的 `setInterval`，实现高精度计时，通过 delta 差值计算避免累积误差。
 
-## 许可证
+### 难点与亮点
 
-MIT License
+- **高精度计时器**：采用 `performance.now()` + delta 差值计算，避免 `setInterval` 累积误差，支持页面关闭后恢复时自动补齐时间
+- **高性能状态管理**：Zustand Slice 模式配合细粒度选择器（selectors.ts），确保只有相关状态变化时组件才重新渲染
+- **离线优先架构**：所有数据存储于 IndexedDB，支持完全离线使用，刷新页面不丢失进度
+- **零依赖拖拽**：使用 `@dnd-kit` 实现答题 sheet 的拖拽排序
+- **TypeScript 严格类型**：全项目启用严格模式，通过类型推导减少运行时错误
+
+### 最佳实践
+
+- 组件按特性组织（features/），每个功能模块包含其组件、hooks 和类型定义
+- IndexedDB 操作封装为 Repository 模式，业务逻辑与存储细节分离
+- React Hook Form + Zod 实现类型安全的表单验证
+- 路由页面懒加载 + 骨架屏，实现渐进式加载体验
