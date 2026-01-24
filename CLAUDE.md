@@ -35,9 +35,11 @@ Store is split into slices in `src/store/`. Each slice exports a `create*Slice` 
 
 Combine slices in `src/store/index.ts` with `zustand/middleware/immer` and `zustand/middleware/persist`. **Use slice-level selectors** from `src/store/selectors.ts` (`useSessionActions()`, `useSessionTimers()`, etc.) to avoid unnecessary re-renders.
 
+**RootState**: All slices merged in `src/store/rootTypes.ts` (`SessionSlice & TemplateSlice & StatsSlice & UISlice`).
+
 **Timer Implementation**: `sessionSlice` manages three timer tracks (`totalMs`, `sectionMs`, `questionMs`) using delta-based updates. The `useSessionTimer` hook uses `performance.now()` with 200ms intervals for high-precision timing.
 
-**Session Persistence**: Zustand persist middleware auto-pauses running sessions on page reload. Use `sessionRepo.restoreRunningSession()` to resume.
+**Session Persistence**: Zustand persist middleware auto-pauses running sessions on page reload. Use `sessionRepo.restoreRunningSession()` to resume - the timer delta compensates for elapsed time while the page was closed.
 
 ### Routing
 
@@ -55,13 +57,20 @@ React Router v7 with code splitting in `src/router/index.tsx`. All pages are laz
 
 ```
 src/
+├── app/              # App entry point (AppLayout)
 ├── components/
-│   ├── ui/          # shadcn/ui-style primitives (cva variants)
-│   └── shared/      # Shared components (skeletons)
-├── features/        # Feature-scoped components with dedicated hooks
-├── pages/           # Route pages (with schema.ts for forms)
-├── hooks/           # Global hooks (useMobile, useSessionTimer)
-└── lib/             # Utilities (cn, utils.ts)
+│   ├── ui/           # shadcn/ui-style primitives (cva variants)
+│   ├── shared/       # Shared components (skeletons)
+│   └── theme/        # Theme provider
+├── features/         # Feature-scoped components with dedicated hooks
+├── pages/            # Route pages
+├── hooks/            # Global hooks (useMobile, useSessionTimer)
+├── store/            # Zustand slices and selectors
+├── lib/              # Utilities (cn, utils.ts)
+├── db/               # IndexedDB utilities and repositories
+├── router/           # React Router configuration
+├── types/            # TypeScript type definitions
+└── utils/            # Helper functions (time formatting)
 ```
 
 ### Data Layer
@@ -72,7 +81,7 @@ IndexedDB via `src/db/` with repository pattern. DB helpers in `src/db/index.ts`
 - `wrapRequest(request)` - Promise wrapper for IDBRequest
 
 **Repositories** (`src/db/repositories/`):
-- `templateRepo` - CRUD for templates
+- `templateRepo` - CRUD for templates and template_items
 - `questionTypeRepo` - CRUD for question types
 - `sessionRepo` - Session management with auto-pause on reload
 - `statsRepo` - Daily statistics aggregation

@@ -1,73 +1,111 @@
-# React + TypeScript + Vite
+# PaceMaster
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<div align="center">
 
-Currently, two official plugins are available:
+![PaceMaster Logo](public/logo.svg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**高效的考试节奏训练与管理工具**
 
-## React Compiler
+[在线演示](https://pace-master.lhiyn.xyz)
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+[![React 19](https://img.shields.io/badge/React-19-61dafb.svg?style=flat-square&logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-7-646cff.svg?style=flat-square&logo=vite)](https://vite.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-38bdf8.svg?style=flat-square&logo=tailwindcss)](https://tailwindcss.com)
 
-## Expanding the ESLint configuration
+</div>
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 简介
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+PaceMaster 是一款专注于考试节奏训练的 Web 应用，帮助用户通过科学的计时与进度管理来提升答题效率。支持练习模式与模拟考试模式，具备答题记录、统计分析和数据备份等功能。
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 技术栈
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **框架**: React 19 + TypeScript
+- **构建工具**: Vite
+- **样式**: Tailwind CSS v4 + Radix UI
+- **状态管理**: Zustand + Immer
+- **路由**: React Router v7
+- **表单**: React Hook Form + Zod
+- **本地存储**: IndexedDB
+- **图表**: Recharts
+- **动画**: tw-animate-css + Framer Motion
+
+## 主要功能
+
+- **节奏训练** - 精确到毫秒的计时器，支持总时、区间时、单题时追踪
+- **练习模式** - 按模板配置进行针对性训练
+- **模拟考试** - 模拟真实考试环境，训练应试节奏
+- **答题记录** - 记录每道题的用时、正确率与状态
+- **数据统计** - 每日学习数据汇总与趋势分析
+- **多主题** - Azure、Citrus、Slate、Rose 四种配色方案
+- **数据备份** - 支持导入导出备份文件
+
+## 快速开始
+
+```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 代码检查
+npm run lint
+
+# 代码格式化
+npm run format
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 项目结构
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── app/              # 应用入口与布局组件
+├── components/       # 共享组件
+│   ├── ui/           # shadcn/ui 风格的基础组件
+│   ├── shared/       # 通用组件（骨架屏等）
+│   └── theme/        # 主题配置
+├── features/         # 功能模块（按特性组织）
+│   ├── dashboard/    # 仪表盘页面
+│   ├── practice/     # 练习/考试页面
+│   ├── records/      # 记录管理页面
+│   ├── review/       # 复盘分析页面
+│   └── settings/     # 设置页面
+├── pages/            # 路由页面组件
+├── hooks/            # 全局自定义 Hooks
+├── store/            # Zustand 状态管理（Slice 模式）
+├── lib/              # 工具函数
+├── db/               # IndexedDB 数据层
+├── router/           # 路由配置
+├── types/            # TypeScript 类型定义
+└── utils/            # 辅助函数
+```
+
+## 架构特点
+
+### 状态管理
+
+采用 Zustand + Immer 的 Slice 模式，将状态按功能模块划分为：
+- `sessionSlice` - 会话状态与计时逻辑
+- `templateSlice` - 模板与题型管理
+- `statsSlice` - 统计数据
+- `uiSlice` - UI 状态
+
+通过 `selectors.ts` 中的细粒度选择器优化渲染性能。
+
+### 数据持久化
+
+- **Zustand Persist** - 会话状态自动持久化，页面刷新自动暂停
+- **IndexedDB** - 记录、模板、统计数据等持久化存储
+
+### 计时器实现
+
+使用 `performance.now()` 配合 200ms 间隔的 `setInterval`，实现高精度计时，通过 delta 差值计算避免累积误差。
+
+## 许可证
+
+MIT License
