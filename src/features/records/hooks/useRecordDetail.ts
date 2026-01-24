@@ -185,21 +185,13 @@ export const useRecordDetail = (sessionId?: string) => {
     }));
   };
 
-  const markAllCorrect = () => {
-    const nextStatus: Record<number, QuestionStatus> = {};
-    questionGrid.forEach(item => {
-      nextStatus[item.number] = 'correct';
-    });
-    setState(prev => ({
-      ...prev,
-      questionStatus: nextStatus,
-    }));
-  };
-
-  const clearAll = () => {
-    const nextStatus: Record<number, QuestionStatus> = {};
-    questionGrid.forEach(item => {
-      nextStatus[item.number] = DEFAULT_STATUS;
+  const markBatch = (typeIndex: number, status: QuestionStatus) => {
+    const targetStatus = status === 'unanswered' ? DEFAULT_STATUS : status;
+    const nextStatus = { ...state.questionStatus };
+    state.questionGrid.forEach(item => {
+      if (item.typeIndex === typeIndex) {
+        nextStatus[item.number] = targetStatus;
+      }
     });
     setState(prev => ({
       ...prev,
@@ -270,8 +262,7 @@ export const useRecordDetail = (sessionId?: string) => {
     setActiveStatus,
     applyActiveStatus,
     setQuestionStatus,
-    markAllCorrect,
-    clearAll,
+    markBatch,
     saveChanges,
     deleteRecord,
   };

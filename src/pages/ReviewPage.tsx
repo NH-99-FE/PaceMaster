@@ -32,8 +32,7 @@ const ReviewPage = () => {
     isSaving,
     setActiveStatus,
     applyActiveStatus,
-    markAllCorrect,
-    clearAll,
+    markBatch,
     saveReview,
   } = useReviewSession();
 
@@ -124,8 +123,7 @@ const ReviewPage = () => {
           questionStatus={questionStatus}
           questionTimes={questionTimes}
           onApplyStatus={applyActiveStatus}
-          onMarkAllCorrect={markAllCorrect}
-          onClearAll={clearAll}
+          onMarkBatch={markBatch}
         />
       </div>
     </div>

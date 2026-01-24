@@ -197,18 +197,13 @@ export const useReviewSession = (sessionId?: string | null) => {
     setQuestionResult(questionNumber, activeStatus);
   };
 
-  const markAllCorrect = () => {
-    const updated: Record<number, QuestionStatus> = {};
+  const markBatch = (typeIndex: number, status: QuestionStatus) => {
+    const targetStatus = status === 'unanswered' ? DEFAULT_STATUS : status;
+    const updated: Record<number, QuestionStatus> = { ...questionStatus };
     questionGrid.forEach(item => {
-      updated[item.number] = 'correct';
-    });
-    setQuestionStatus(updated);
-  };
-
-  const clearAll = () => {
-    const updated: Record<number, QuestionStatus> = {};
-    questionGrid.forEach(item => {
-      updated[item.number] = DEFAULT_STATUS;
+      if (item.typeIndex === typeIndex) {
+        updated[item.number] = targetStatus;
+      }
     });
     setQuestionStatus(updated);
   };
@@ -333,8 +328,7 @@ export const useReviewSession = (sessionId?: string | null) => {
     setActiveStatus,
     setQuestionResult,
     applyActiveStatus,
-    markAllCorrect,
-    clearAll,
+    markBatch,
     saveReview,
   };
 };
