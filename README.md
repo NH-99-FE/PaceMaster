@@ -26,10 +26,9 @@ PaceMaster 是一款专注于考试节奏训练的 Web 应用，帮助用户通�
 - **样式**: Tailwind CSS v4 + Radix UI
 - **状态管理**: Zustand + Immer
 - **路由**: React Router v7
-- **表单**: React Hook Form + Zod
 - **本地存储**: IndexedDB
 - **图表**: Recharts
-- **动画**: tw-animate-css + Framer Motion
+- **动画**: tw-animate-css
 
 ## 主要功能
 
@@ -119,5 +118,5 @@ src/
 
 - 组件按特性组织（features/），每个功能模块包含其组件、hooks 和类型定义
 - IndexedDB 操作封装为 Repository 模式，业务逻辑与存储细节分离
-- React Hook Form + Zod 实现类型安全的表单验证
+- React 表单处理
 - 路由页面懒加载 + 骨架屏，实现渐进式加载体验

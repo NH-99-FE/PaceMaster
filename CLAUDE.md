@@ -97,7 +97,7 @@ IndexedDB via `src/db/` with repository pattern. DB helpers in `src/db/index.ts`
 
 ### Forms
 
-React Hook Form + Zod validation. Schema in page directory's `schema.ts`. Use `zodResolver`.
+React Hook Form with Zod validation (schema in page directory's `schema.ts`).
 
 ### Path Alias
 
