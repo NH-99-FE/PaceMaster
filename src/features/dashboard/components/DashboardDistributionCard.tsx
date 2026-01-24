@@ -64,14 +64,7 @@ export const DashboardDistributionCard = ({
                     />
                   ))}
                 </Pie>
-                <Tooltip
-                  formatter={value => formatCount(value as number | string)}
-                  contentStyle={{
-                    borderRadius: 10,
-                    borderColor: 'hsl(var(--border))',
-                    background: 'hsl(var(--background))',
-                  }}
-                />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -90,4 +83,27 @@ export const DashboardDistributionCard = ({
       </CardContent>
     </Card>
   );
+};
+
+// 自定义 Tooltip 组件，确保样式受控
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0];
+    return (
+      <div className="border-border bg-popover text-popover-foreground rounded-lg border px-3 py-2 shadow-sm text-sm">
+        <div className="flex items-center gap-2">
+          <span
+            className="h-2 w-2 rounded-full"
+            style={{ backgroundColor: data.payload.fill }} // 使用 Cell 传入的 fill
+          />
+          <span className="font-medium">{data.name}</span>
+        </div>
+        <div className="mt-1 text-muted-foreground text-xs pl-4">
+          {formatCount(data.value)}
+        </div>
+      </div>
+    );
+  }
+  return null;
 };
