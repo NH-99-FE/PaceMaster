@@ -1,24 +1,46 @@
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useRecords } from '@/features/records/hooks/useRecords';
+import { useRecords, type ReviewRecord } from '@/features/records/hooks/useRecords';
+import { RecordEditDialog } from '@/features/records/components/RecordEditDialog';
 import { formatDateTime, formatDuration } from '@/utils/time';
+import { sessionRepo } from '@/db/repositories/sessionRepo';
 
 const formatPercent = (value: number) => `${(value * 100).toFixed(1)}%`;
 
 const RecordsPage = () => {
   const { records, isLoading, summary, refresh } = useRecords();
   const navigate = useNavigate();
+  const [editingRecord, setEditingRecord] = useState<ReviewRecord | null>(null);
+
   const handleRefresh = async () => {
     try {
       await refresh();
       toast.success('记录已刷新');
     } catch {
       toast.error('刷新失败，请稍后重试');
+    }
+  };
+
+  const handleEditClick = (e: React.MouseEvent, record: ReviewRecord) => {
+    e.stopPropagation();
+    setEditingRecord(record);
+  };
+
+  const handleSaveRename = async (newName: string) => {
+    if (!editingRecord) return;
+    try {
+      await sessionRepo.updateSession(editingRecord.id, { name: newName });
+      await refresh();
+      toast.success('重命名成功');
+      setEditingRecord(null);
+    } catch {
+      toast.error('重命名失败，请稍后重试');
     }
   };
 
@@ -89,17 +111,24 @@ const RecordsPage = () => {
           ) : (
             <div className="space-y-2">
               {records.map(record => (
-                <button
+                <div
                   key={record.id}
-                  type="button"
                   onClick={() => navigate(`/records/${record.id}`)}
-                  className="border-border hover:border-primary/40 hover:bg-primary/5 flex w-full flex-col gap-2 rounded-md border px-3 py-2 text-left transition-colors md:flex-row md:items-center md:justify-between"
+                  className="border-border hover:border-primary/40 hover:bg-primary/5 flex w-full cursor-pointer flex-col gap-2 rounded-md border px-3 py-2 text-left transition-colors md:flex-row md:items-center md:justify-between group"
                 >
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-medium">
                         {record.name}
                       </span>
+                      <button
+                        type="button"
+                        onClick={e => handleEditClick(e, record)}
+                        className="text-muted-foreground hover:text-foreground shrink-0 p-1 opacity-100 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100"
+                        title="重命名"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
                       <Badge
                         variant={
                           record.mode === 'practice' ? 'secondary' : 'outline'
@@ -122,12 +151,19 @@ const RecordsPage = () => {
                     <span>题数 {record.totalQuestions}</span>
                     <span>用时 {formatDuration(record.totalTimeMs)}</span>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}
         </CardContent>
       </Card>
+
+      <RecordEditDialog
+        open={!!editingRecord}
+        defaultName={editingRecord?.name ?? ''}
+        onSave={handleSaveRename}
+        onCancel={() => setEditingRecord(null)}
+      />
     </div>
   );
 };
