@@ -146,7 +146,8 @@ export const useReviewSession = (sessionId?: string | null) => {
     if (!sessionId) return;
     const loadRecords = async () => {
       try {
-        const records = await sessionRepo.getQuestionRecordsBySession(sessionId);
+        const records =
+          await sessionRepo.getQuestionRecordsBySession(sessionId);
         if (records.length > 0) {
           const statusMap: Record<number, QuestionStatus> = {};
           records.forEach(record => {
@@ -208,7 +209,10 @@ export const useReviewSession = (sessionId?: string | null) => {
     setQuestionStatus(updated);
   };
 
-  const saveReview = async (existingSessionId?: string, sessionName?: string) => {
+  const saveReview = async (
+    existingSessionId?: string,
+    sessionName?: string
+  ) => {
     if (!activeTemplate || orderedItems.length === 0) return null;
     setIsSaving(true);
     try {

@@ -36,7 +36,12 @@ export const DashboardDistributionCard = ({
           </div>
         ) : (
           <div className="flex-1">
-            <ResponsiveContainer width="100%" height={240} minWidth={0}>
+            <ResponsiveContainer
+              className="[&_.recharts-surface]:outline-none"
+              width="100%"
+              height={240}
+              minWidth={0}
+            >
               <PieChart>
                 <Pie
                   data={data}
@@ -91,7 +96,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div className="border-border bg-popover text-popover-foreground rounded-lg border px-3 py-2 shadow-sm text-sm">
+      <div className="border-border bg-popover text-popover-foreground rounded-lg border px-3 py-2 text-sm shadow-sm">
         <div className="flex items-center gap-2">
           <span
             className="h-2 w-2 rounded-full"
@@ -99,7 +104,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           />
           <span className="font-medium">{data.name}</span>
         </div>
-        <div className="mt-1 text-muted-foreground text-xs pl-4">
+        <div className="text-muted-foreground mt-1 pl-4 text-xs">
           {formatCount(data.value)}
         </div>
       </div>

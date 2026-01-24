@@ -6,7 +6,10 @@ import { Loader2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useRecords, type ReviewRecord } from '@/features/records/hooks/useRecords';
+import {
+  useRecords,
+  type ReviewRecord,
+} from '@/features/records/hooks/useRecords';
 import { RecordEditDialog } from '@/features/records/components/RecordEditDialog';
 import { formatDateTime, formatDuration } from '@/utils/time';
 import { sessionRepo } from '@/db/repositories/sessionRepo';
@@ -114,12 +117,12 @@ const RecordsPage = () => {
                 <div
                   key={record.id}
                   onClick={() => navigate(`/records/${record.id}`)}
-                  className="border-border hover:border-primary/40 hover:bg-primary/5 flex w-full cursor-pointer flex-col gap-2 rounded-md border px-3 py-2 text-left transition-colors md:flex-row md:items-center md:justify-between group"
+                  className="border-border hover:border-primary/40 hover:bg-primary/5 group flex w-full cursor-pointer flex-col gap-2 rounded-md border px-3 py-2 text-left transition-colors md:flex-row md:items-center md:justify-between"
                 >
                   <div className="w-full space-y-1 md:w-auto">
                     <div className="flex items-center justify-between gap-2 md:justify-start">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-sm font-medium truncate max-w-[10em] md:max-w-[8em] lg:max-w-[15em]">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span className="max-w-[10em] truncate text-sm font-medium md:max-w-[8em] lg:max-w-[15em]">
                           {record.name}
                         </span>
                         <button
@@ -131,7 +134,7 @@ const RecordsPage = () => {
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex shrink-0 items-center gap-2">
                         <Badge
                           variant={
                             record.mode === 'practice' ? 'secondary' : 'outline'

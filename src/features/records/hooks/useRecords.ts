@@ -70,7 +70,8 @@ export const useRecords = () => {
           const completionRate =
             totalQuestions > 0 ? answeredCount / totalQuestions : 0;
 
-          const templateName = templateMap.get(session.templateId) ?? '未命名模板';
+          const templateName =
+            templateMap.get(session.templateId) ?? '未命名模板';
           const displayName = session.name || templateName;
 
           return {

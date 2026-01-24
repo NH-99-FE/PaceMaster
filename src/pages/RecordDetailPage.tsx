@@ -143,7 +143,7 @@ const RecordDetailPage = () => {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold">复盘详情</h1>
             {state.session?.name && (
-              <span className="text-muted-foreground font-normal text-sm">
+              <span className="text-muted-foreground text-sm font-normal">
                 · {state.session.name}
               </span>
             )}

@@ -12,7 +12,11 @@ import { PracticeTimerPanel } from '@/features/practice/components/PracticeTimer
 import { usePracticeSession } from '@/features/practice/hooks/usePracticeSession';
 import { sessionRepo } from '@/db/repositories/sessionRepo';
 import { formatDateTime } from '@/utils/time';
-import { useSessionQuestionTimes, useSessionStartedAt, useSessionEndDialogShown } from '@/store/selectors';
+import {
+  useSessionQuestionTimes,
+  useSessionStartedAt,
+  useSessionEndDialogShown,
+} from '@/store/selectors';
 import type { Session, SessionItem, QuestionRecord } from '@/types';
 
 const PracticePage = () => {
@@ -110,7 +114,14 @@ const PracticePage = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isRunning, canNavigate, canGoNext, configOpen, endDialogOpen, handleNextQuestion]);
+  }, [
+    isRunning,
+    canNavigate,
+    canGoNext,
+    configOpen,
+    endDialogOpen,
+    handleNextQuestion,
+  ]);
 
   const generateDefaultName = () => {
     const activeTemplateName = activeTemplate?.name ?? '练习';
@@ -162,9 +173,7 @@ const PracticePage = () => {
     orderedItems.forEach((item, index) => {
       const plannedMs = item.plannedTime * 60_000;
       const perQuestion =
-        item.questionCount > 0
-          ? Math.round(plannedMs / item.questionCount)
-          : 0;
+        item.questionCount > 0 ? Math.round(plannedMs / item.questionCount) : 0;
       plannedPerQuestionMap.set(index, perQuestion);
     });
 
@@ -328,10 +337,7 @@ const PracticePage = () => {
           }
           reviewAction={
             status === 'ended' ? (
-              <Button
-                variant="outline"
-                onClick={handleGoReview}
-              >
+              <Button variant="outline" onClick={handleGoReview}>
                 {activeSessionId ? '补录复盘' : '去复盘'}
               </Button>
             ) : null
@@ -358,6 +364,5 @@ const PracticePage = () => {
     </div>
   );
 };
-
 
 export default PracticePage;

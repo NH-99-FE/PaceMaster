@@ -44,7 +44,7 @@ export const DashboardTrendCard = ({ data }: DashboardTrendCardProps) => (
         </span>
       </div>
     </CardHeader>
-    <CardContent className="h-64">
+    <CardContent className="h-64 [&_.recharts-surface]:outline-none">
       <ResponsiveContainer width="100%" height={256} minWidth={0}>
         <AreaChart
           data={data}

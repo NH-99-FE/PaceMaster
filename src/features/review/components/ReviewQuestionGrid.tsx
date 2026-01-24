@@ -84,7 +84,7 @@ export const ReviewQuestionGrid = ({
                 <button
                   type="button"
                   onClick={() => onMarkBatch(group.typeIndex, 'correct')}
-                  className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
+                  className="text-emerald-600 transition-colors hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
                 >
                   一键正确
                 </button>

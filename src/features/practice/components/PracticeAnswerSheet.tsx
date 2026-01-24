@@ -40,7 +40,7 @@ export const PracticeAnswerSheet = ({
   onJumpType,
 }: PracticeAnswerSheetProps) => {
   const [open, setOpen] = useState(false);
-  
+
   // 根据题号跳过状态计算题型标记。
   const skippedSet = new Set(skips);
   const skippedTypeIds = new Set<string>();
@@ -72,10 +72,10 @@ export const PracticeAnswerSheet = ({
       label: string;
       questions: QuestionGridItem[];
     }> = [];
-    
+
     let currentLabel = '';
     let currentGroup: QuestionGridItem[] = [];
-    
+
     questionGrid.forEach(item => {
       if (item.label !== currentLabel) {
         if (currentGroup.length > 0) {
@@ -87,11 +87,11 @@ export const PracticeAnswerSheet = ({
         currentGroup.push(item);
       }
     });
-    
+
     if (currentGroup.length > 0) {
       groups.push({ label: currentLabel, questions: currentGroup });
     }
-    
+
     return groups;
   }, [questionGrid]);
 
@@ -145,9 +145,9 @@ export const PracticeAnswerSheet = ({
                           {!isSelected && (
                             <>
                               {isSkipped ? (
-                                <AlertCircle className="text-accent absolute right-0.5 top-0.5 h-3 w-3 stroke-[2.5]" />
+                                <AlertCircle className="text-accent absolute top-0.5 right-0.5 h-3 w-3 stroke-[2.5]" />
                               ) : hasAnswered ? (
-                                <Check className="text-primary absolute right-0.5 top-0.5 h-3 w-3 stroke-[3]" />
+                                <Check className="text-primary absolute top-0.5 right-0.5 h-3 w-3 stroke-[3]" />
                               ) : null}
                             </>
                           )}
