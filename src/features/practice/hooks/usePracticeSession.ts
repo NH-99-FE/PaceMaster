@@ -12,6 +12,7 @@ import {
   useSessionTemplateId,
   useSessionTimers,
   useSessionQuestionTimes,
+  useSessionActiveSessionId,
   useTemplateActions,
   useTemplateItems,
   useTemplates,
@@ -34,6 +35,7 @@ export const usePracticeSession = () => {
   const questionTimes = useSessionQuestionTimes();
   const templateId = useSessionTemplateId();
   const order = useSessionOrder();
+  const activeSessionId = useSessionActiveSessionId();
 
   const templates = useTemplates();
   const templateActions = useTemplateActions();
@@ -440,5 +442,6 @@ export const usePracticeSession = () => {
     handleJumpType,
     handleEnd,
     actions,
+    activeSessionId,
   };
 };

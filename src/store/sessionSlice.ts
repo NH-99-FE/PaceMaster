@@ -15,6 +15,7 @@ export type SessionSliceState = {
   questionTimes: Record<number, number>;
   currentQuestionNumber?: number;
   endDialogShown: boolean;
+  activeSessionId?: string;
 };
 
 export type SessionSliceActions = {
@@ -34,6 +35,7 @@ export type SessionSliceActions = {
   end: () => void;
   reset: () => void;
   markEndDialogShown: () => void;
+  setActiveSessionId: (id: string | undefined) => void;
 };
 
 export type SessionSlice = {
@@ -57,6 +59,7 @@ const initialState: SessionSliceState = {
   questionTimes: {},
   currentQuestionNumber: undefined,
   endDialogShown: false,
+  activeSessionId: undefined,
 };
 
 export const createSessionSlice: StateCreator<
@@ -176,11 +179,16 @@ export const createSessionSlice: StateCreator<
             ...initialState,
             mode: currentMode,
             actions: state.session.actions,
+            activeSessionId: undefined,
           };
         }),
       markEndDialogShown: () =>
         set(state => {
           state.session.endDialogShown = true;
+        }),
+      setActiveSessionId: id =>
+        set(state => {
+          state.session.activeSessionId = id;
         }),
     },
   },

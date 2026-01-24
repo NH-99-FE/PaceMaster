@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'review',
+        path: 'review/:reviewId?',
         element: (
           <Suspense fallback={<ReviewSkeleton />}>
             <ReviewPage />

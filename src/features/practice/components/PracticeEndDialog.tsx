@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 type PracticeEndDialogProps = {
   open: boolean;
   defaultName: string;
-  onSave: (name: string) => void;
+  onSave: (name: string) => Promise<string | null>;
   onCancel: () => void;
 };
 
@@ -26,14 +26,27 @@ export const PracticeEndDialog = ({
 }: PracticeEndDialogProps) => {
   const navigate = useNavigate();
   const [name, setName] = useState(defaultName);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    onSave(name.trim() || defaultName);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSave(name.trim() || defaultName);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleSaveAndReview = () => {
-    onSave(name.trim() || defaultName);
-    navigate('/review');
+  const handleSaveAndReview = async () => {
+    setIsSaving(true);
+    try {
+      const sessionId = await onSave(name.trim() || defaultName);
+      if (sessionId) {
+        navigate(`/review/${sessionId}`);
+      }
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -68,13 +81,26 @@ export const PracticeEndDialog = ({
           </div>
         </div>
         <DialogFooter className="flex-col gap-2 sm:flex-row">
-          <Button variant="outline" onClick={onCancel} className="w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            className="w-full sm:w-auto"
+            disabled={isSaving}
+          >
             取消
           </Button>
-          <Button onClick={handleSave} className="w-full sm:w-auto">
+          <Button
+            onClick={handleSave}
+            className="w-full sm:w-auto"
+            disabled={isSaving}
+          >
             保存记录
           </Button>
-          <Button onClick={handleSaveAndReview} className="w-full sm:w-auto">
+          <Button
+            onClick={handleSaveAndReview}
+            className="w-full sm:w-auto"
+            disabled={isSaving}
+          >
             保存并复盘
           </Button>
         </DialogFooter>

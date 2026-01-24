@@ -57,6 +57,7 @@ const PracticePage = () => {
   const endDialogShown = useSessionEndDialogShown();
   const [restoreDismissed, setRestoreDismissed] = useState(false);
   const [configOpen, setConfigOpen] = useState(false);
+  const { activeSessionId } = usePracticeSession();
   const [endDialogOpen, setEndDialogOpen] = useState(false);
   const shouldInitializeRestore = status === 'running' && timers.totalMs > 0;
   const [hasRestorePrompt, setHasRestorePrompt] = useState(
@@ -87,7 +88,7 @@ const PracticePage = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // 只在练习进行中且可以导航时响应
       if (!isRunning || !canNavigate) return;
-      
+
       // 如果焦点在输入框或弹窗中，不响应
       const target = e.target as HTMLElement;
       if (
@@ -112,98 +113,132 @@ const PracticePage = () => {
   }, [isRunning, canNavigate, canGoNext, configOpen, endDialogOpen, handleNextQuestion]);
 
   const generateDefaultName = () => {
+    const activeTemplateName = activeTemplate?.name ?? '练习';
     const now = new Date();
-    const templateName = activeTemplate?.name ?? '练习';
-    return `${templateName} - ${formatDateTime(now.toISOString())}`;
+    return `${activeTemplateName} - ${formatDateTime(now.toISOString())}`;
+  };
+
+  const ensureSessionSaved = async (name?: string) => {
+    if (activeSessionId) return activeSessionId;
+    if (!activeTemplate || orderedItems.length === 0) return null;
+
+    const sessionId = crypto.randomUUID();
+    const now = new Date().toISOString();
+    const startedAtMs =
+      typeof startedAt === 'number' ? startedAt : Date.now() - timers.totalMs;
+
+    const sessionName = name ?? generateDefaultName();
+
+    const session: Session = {
+      id: sessionId,
+      name: sessionName,
+      mode,
+      templateId: activeTemplate.id,
+      customOrder: orderedItems.map(item => item.id),
+      status: 'ended', // 或 'reviewing'，取决于是否要区分
+      startedAt: new Date(startedAtMs).toISOString(),
+      endedAt: now,
+      totalTimeMs: timers.totalMs,
+      pausedCount: 0,
+    };
+
+    const sessionItems: SessionItem[] = orderedItems.map((item, index) => ({
+      id: crypto.randomUUID(),
+      sessionId,
+      templateItemId: item.id,
+      actualTimeMs: 0,
+      plannedTime: item.plannedTime * 60_000,
+      questionCount: item.questionCount,
+      overtimeCount: 0,
+      orderIndex: index,
+    }));
+
+    const sessionItemMap = new Map<number, SessionItem>();
+    sessionItems.forEach((item, index) => {
+      sessionItemMap.set(index, item);
+    });
+
+    const plannedPerQuestionMap = new Map<number, number>();
+    orderedItems.forEach((item, index) => {
+      const plannedMs = item.plannedTime * 60_000;
+      const perQuestion =
+        item.questionCount > 0
+          ? Math.round(plannedMs / item.questionCount)
+          : 0;
+      plannedPerQuestionMap.set(index, perQuestion);
+    });
+
+    const typeActualTime = new Map<number, number>();
+    questionGrid.forEach(item => {
+      const timeMs = questionTimes[item.number] ?? 0;
+      typeActualTime.set(
+        item.typeIndex,
+        (typeActualTime.get(item.typeIndex) ?? 0) + timeMs
+      );
+    });
+
+    sessionItems.forEach(item => {
+      const timeMs = typeActualTime.get(item.orderIndex) ?? 0;
+      item.actualTimeMs = timeMs;
+    });
+
+    const records: QuestionRecord[] = questionGrid.map(item => {
+      const sessionItem = sessionItemMap.get(item.typeIndex);
+      return {
+        id: crypto.randomUUID(),
+        sessionId,
+        sessionItemId: sessionItem?.id ?? '',
+        questionIndex: item.number,
+        actualTimeMs: questionTimes[item.number] ?? 0,
+        plannedTime: plannedPerQuestionMap.get(item.typeIndex) ?? 0,
+        status: 'unanswered',
+      };
+    });
+
+    await sessionRepo.createSession(session, sessionItems);
+    await sessionRepo.appendQuestionRecords(records);
+    actions.setActiveSessionId(sessionId);
+    return sessionId;
   };
 
   const handleSaveSession = async (name: string) => {
-    if (!activeTemplate || orderedItems.length === 0) {
-      toast.error('保存失败，请检查模板设置');
-      return;
-    }
-
     try {
-      const sessionId = crypto.randomUUID();
-      const now = new Date().toISOString();
-      const startedAtMs =
-        typeof startedAt === 'number' ? startedAt : Date.now() - timers.totalMs;
+      const sessionId = await ensureSessionSaved(name);
+      if (sessionId) {
+        // 如果已存在 ID（即 Draft 转正），这里应当更新名字？
+        // 简单起见，ensureSessionSaved 若 id 存在直接返回。
+        // 若需支持改名，可在此调用 sessionRepo.updateSession(sessionId, { name })。
+        // 按目前逻辑，ensureSessionSaved 只负责确保有记录。
+        // 如果是弹窗主动保存，我们希望更新名字。
+        if (activeSessionId) {
+          await sessionRepo.updateSession(activeSessionId, { name });
+        }
 
-      const session: Session = {
-        id: sessionId,
-        name,
-        mode,
-        templateId: activeTemplate.id,
-        customOrder: orderedItems.map(item => item.id),
-        status: 'ended',
-        startedAt: new Date(startedAtMs).toISOString(),
-        endedAt: now,
-        totalTimeMs: timers.totalMs,
-        pausedCount: 0,
-      };
-
-      const sessionItems: SessionItem[] = orderedItems.map((item, index) => ({
-        id: crypto.randomUUID(),
-        sessionId,
-        templateItemId: item.id,
-        actualTimeMs: 0,
-        plannedTime: item.plannedTime * 60_000,
-        questionCount: item.questionCount,
-        overtimeCount: 0,
-        orderIndex: index,
-      }));
-
-      const sessionItemMap = new Map<number, SessionItem>();
-      sessionItems.forEach((item, index) => {
-        sessionItemMap.set(index, item);
-      });
-
-      const plannedPerQuestionMap = new Map<number, number>();
-      orderedItems.forEach((item, index) => {
-        const plannedMs = item.plannedTime * 60_000;
-        const perQuestion =
-          item.questionCount > 0
-            ? Math.round(plannedMs / item.questionCount)
-            : 0;
-        plannedPerQuestionMap.set(index, perQuestion);
-      });
-
-      const typeActualTime = new Map<number, number>();
-      questionGrid.forEach(item => {
-        const timeMs = questionTimes[item.number] ?? 0;
-        typeActualTime.set(
-          item.typeIndex,
-          (typeActualTime.get(item.typeIndex) ?? 0) + timeMs
-        );
-      });
-
-      sessionItems.forEach(item => {
-        const timeMs = typeActualTime.get(item.orderIndex) ?? 0;
-        item.actualTimeMs = timeMs;
-      });
-
-      const records: QuestionRecord[] = questionGrid.map(item => {
-        const sessionItem = sessionItemMap.get(item.typeIndex);
-        return {
-          id: crypto.randomUUID(),
-          sessionId,
-          sessionItemId: sessionItem?.id ?? '',
-          questionIndex: item.number,
-          actualTimeMs: questionTimes[item.number] ?? 0,
-          plannedTime: plannedPerQuestionMap.get(item.typeIndex) ?? 0,
-          status: 'unanswered',
-        };
-      });
-
-      await sessionRepo.createSession(session, sessionItems);
-      await sessionRepo.appendQuestionRecords(records);
-
-      setEndDialogOpen(false);
-      actions.markEndDialogShown();
-      toast.success('练习记录已保存');
+        setEndDialogOpen(false);
+        actions.markEndDialogShown();
+        toast.success('练习记录已保存');
+        return sessionId;
+      }
+      return null;
     } catch (error) {
       console.error('保存失败:', error);
       toast.error('保存失败，请稍后重试');
+      return null;
+    }
+  };
+
+  const handleGoReview = async () => {
+    if (!activeSessionId) {
+      // 没 ID 则创建 Draft
+      const id = await ensureSessionSaved();
+      if (id) {
+        navigate(`/review/${id}`);
+      } else {
+        toast.error('无法进入复盘，请检查数据');
+      }
+    } else {
+      // 有 ID 直接进
+      navigate(`/review/${activeSessionId}`);
     }
   };
 
@@ -293,8 +328,11 @@ const PracticePage = () => {
           }
           reviewAction={
             status === 'ended' ? (
-              <Button variant="outline" onClick={() => navigate('/review')}>
-                去复盘
+              <Button
+                variant="outline"
+                onClick={handleGoReview}
+              >
+                {activeSessionId ? '补录复盘' : '去复盘'}
               </Button>
             ) : null
           }
@@ -320,5 +358,6 @@ const PracticePage = () => {
     </div>
   );
 };
+
 
 export default PracticePage;

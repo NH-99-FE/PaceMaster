@@ -32,7 +32,7 @@ const DEFAULT_STATUS: QuestionStatus = 'unanswered';
 const DEFAULT_ACTIVE_STATUS: QuestionStatus = 'correct';
 
 // 复盘核心数据与状态（题目状态补录 + 保存）。
-export const useReviewSession = () => {
+export const useReviewSession = (sessionId?: string | null) => {
   const mode = useSessionMode();
   const order = useSessionOrder();
   const templateId = useSessionTemplateId();
@@ -142,6 +142,28 @@ export const useReviewSession = () => {
     setQuestionStatus(initial);
   }, [reviewKey, questionGrid]);
 
+  useEffect(() => {
+    if (!sessionId) return;
+    const loadRecords = async () => {
+      try {
+        const records = await sessionRepo.getQuestionRecordsBySession(sessionId);
+        if (records.length > 0) {
+          const statusMap: Record<number, QuestionStatus> = {};
+          records.forEach(record => {
+            statusMap[record.questionIndex] = record.status;
+          });
+          setQuestionStatus(prev => ({
+            ...prev,
+            ...statusMap,
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to load review records:', error);
+      }
+    };
+    loadRecords();
+  }, [sessionId]);
+
   const counts = useMemo(() => {
     const result = {
       correct: 0,
@@ -195,6 +217,14 @@ export const useReviewSession = () => {
     if (!activeTemplate || orderedItems.length === 0) return null;
     setIsSaving(true);
     try {
+      let finalName = sessionName;
+      if (existingSessionId && !finalName) {
+        const oldSession = await sessionRepo.getSessionById(existingSessionId);
+        if (oldSession) {
+          finalName = oldSession.name;
+        }
+      }
+
       const sessionId = existingSessionId ?? crypto.randomUUID();
       const now = new Date().toISOString();
       const startedAtMs =
@@ -202,7 +232,7 @@ export const useReviewSession = () => {
 
       const session: Session = {
         id: sessionId,
-        name: sessionName,
+        name: finalName,
         mode,
         templateId: activeTemplate.id,
         customOrder: order,
@@ -267,8 +297,17 @@ export const useReviewSession = () => {
         };
       });
 
-      await sessionRepo.createSession(session, sessionItems);
-      await sessionRepo.appendQuestionRecords(records);
+      if (existingSessionId) {
+        await sessionRepo.overwriteSession(
+          sessionId,
+          session,
+          sessionItems,
+          records
+        );
+      } else {
+        await sessionRepo.createSession(session, sessionItems);
+        await sessionRepo.appendQuestionRecords(records);
+      }
 
       return sessionId;
     } finally {

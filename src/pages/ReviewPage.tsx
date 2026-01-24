@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +12,10 @@ import { formatDateTime } from '@/utils/time';
 
 const ReviewPage = () => {
   const navigate = useNavigate();
-  const [savedSessionId, setSavedSessionId] = useState<string | null>(null);
+  const { reviewId } = useParams();
+  const [savedSessionId, setSavedSessionId] = useState<string | null>(
+    reviewId ?? null
+  );
   const {
     mode,
     activeTemplate,
@@ -37,10 +40,16 @@ const ReviewPage = () => {
   const handleSave = async () => {
     try {
       const sessionName = savedSessionId ? undefined : generateDefaultName();
-      const sessionId = await saveReview(savedSessionId ?? undefined, sessionName);
+      // 强制要求有 ID 才保存。如果是新进入复盘但无 ID（理论上不应发生，因为 Practice 保证了 Draft），这里防御性拦截。
+      if (!savedSessionId) {
+        toast.error('无法保存：未找到关联的练习记录');
+        return;
+      }
+
+      const sessionId = await saveReview(savedSessionId, sessionName);
       if (sessionId) {
         setSavedSessionId(sessionId);
-        toast.success(savedSessionId ? '复盘已更新' : '复盘已保存');
+        toast.success('复盘已更新');
       } else {
         toast.error('保存失败，请检查题目与模板设置');
       }

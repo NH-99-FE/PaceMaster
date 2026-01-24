@@ -30,6 +30,8 @@ export const useSessionQuestionTimes = () =>
   useAppStore(s => s.session.questionTimes);
 export const useSessionEndDialogShown = () =>
   useAppStore(s => s.session.endDialogShown);
+export const useSessionActiveSessionId = () =>
+  useAppStore(s => s.session.activeSessionId);
 
 // 模板选择器。
 export const useTemplates = () => useAppStore(s => s.templatesStore.templates);

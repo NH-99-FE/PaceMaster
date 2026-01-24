@@ -45,6 +45,42 @@ export const sessionRepo = {
     });
   },
 
+  async overwriteSession(
+    sessionId: string,
+    session: Session,
+    items: SessionItem[],
+    records: QuestionRecord[]
+  ) {
+    return idb.withStores(
+      [SESSION_STORE, ITEM_STORE, RECORD_STORE],
+      'readwrite',
+      async stores => {
+        // 1. 删除旧数据 (Items)
+        const itemIndex = stores[ITEM_STORE].index('session_id');
+        const itemKeys = await idb.wrapRequest<IDBValidKey[]>(
+          itemIndex.getAllKeys(sessionId)
+        );
+        for (const key of itemKeys) {
+          stores[ITEM_STORE].delete(key);
+        }
+
+        // 2. 删除旧数据 (Records)
+        const recordIndex = stores[RECORD_STORE].index('session_id');
+        const recordKeys = await idb.wrapRequest<IDBValidKey[]>(
+          recordIndex.getAllKeys(sessionId)
+        );
+        for (const key of recordKeys) {
+          stores[RECORD_STORE].delete(key);
+        }
+
+        // 3. 写入新数据
+        stores[SESSION_STORE].put(session);
+        items.forEach(item => stores[ITEM_STORE].put(item));
+        records.forEach(record => stores[RECORD_STORE].put(record));
+      }
+    );
+  },
+
   async endSession(sessionId: string, patch: Partial<Session>) {
     return sessionRepo.updateSession(sessionId, { ...patch, status: 'ended' });
   },
