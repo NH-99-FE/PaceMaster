@@ -338,7 +338,7 @@ const PracticePage = () => {
           reviewAction={
             status === 'ended' ? (
               <Button variant="outline" onClick={handleGoReview}>
-                {activeSessionId ? '补录复盘' : '去复盘'}
+                {activeSessionId ? '去补录' : '去复盘'}
               </Button>
             ) : null
           }
