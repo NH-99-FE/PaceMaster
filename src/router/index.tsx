@@ -6,13 +6,21 @@ import RecordsSkeleton from '@/components/shared/RecordsSkeleton';
 import ReviewSkeleton from '@/components/shared/ReviewSkeleton';
 import SettingsSkeleton from '@/components/shared/SettingsSkeleton';
 import { createBrowserRouter, Navigate } from 'react-router';
+import {
+  loadDashboardPage,
+  loadPracticePage,
+  loadRecordsPage,
+  loadRecordDetailPage,
+  loadReviewPage,
+  loadSettingsPage,
+} from './loaders';
 
-const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
-const PracticePage = lazy(() => import('@/pages/PracticePage'));
-const RecordsPage = lazy(() => import('@/pages/RecordsPage'));
-const RecordDetailPage = lazy(() => import('@/pages/RecordDetailPage'));
-const ReviewPage = lazy(() => import('@/pages/ReviewPage'));
-const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
+const DashboardPage = lazy(loadDashboardPage);
+const PracticePage = lazy(loadPracticePage);
+const RecordsPage = lazy(loadRecordsPage);
+const RecordDetailPage = lazy(loadRecordDetailPage);
+const ReviewPage = lazy(loadReviewPage);
+const SettingsPage = lazy(loadSettingsPage);
 
 export const router = createBrowserRouter([
   {

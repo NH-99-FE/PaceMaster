@@ -24,6 +24,12 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import {
+  loadPracticePage,
+  loadRecordsPage,
+  loadSettingsPage,
+} from '@/router/loaders';
+import { useEffect } from 'react';
 
 const navItems = [
   { to: '/dashboard', label: '概览', icon: LayoutGrid },
@@ -34,6 +40,22 @@ const navItems = [
 
 const AppLayout = () => {
   const location = useLocation();
+
+  useEffect(() => {
+    // 预加载函数：提前触发这些懒加载页面的 import,让浏览器把对应的 JS chunk 先下载进缓存，这样用户第一次切到这些 Tab 时就不容易卡顿。
+    const preload = () => {
+      loadPracticePage();
+      loadRecordsPage();
+      loadSettingsPage();
+    };
+    // 优先使用 requestIdleCallback：等浏览器“空闲”再预加载，避免影响首屏渲染性能。
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(preload);
+    } else {
+      // 兼容不支持 requestIdleCallback 的环境：延迟一会儿再预加载,1000ms 是经验值，可根据首屏压力适当调大/调小。
+      setTimeout(preload, 1000);
+    }
+  }, []);
 
   return (
     <div className="bg-background text-foreground min-h-screen">
