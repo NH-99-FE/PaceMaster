@@ -3,6 +3,40 @@ import type { QuestionStatus } from '@/types';
 import type { ReviewQuestion } from '@/features/review/hooks/useReviewSession';
 import { formatDuration } from '@/utils/time';
 import { cn } from '@/lib/utils';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Check, X, ArrowRight, Minus, PenTool } from 'lucide-react';
+
+const STATUS_CONFIG = {
+  correct: {
+    label: '正确',
+    icon: Check,
+    className: 'text-emerald-600',
+    bgClass: 'bg-emerald-500/10 hover:bg-emerald-500/20',
+  },
+  wrong: {
+    label: '错误',
+    icon: X,
+    className: 'text-rose-600',
+    bgClass: 'bg-rose-500/10 hover:bg-rose-500/20',
+  },
+  skip: {
+    label: '跳过',
+    icon: ArrowRight,
+    className: 'text-amber-600',
+    bgClass: 'bg-amber-500/10 hover:bg-amber-500/20',
+  },
+  unanswered: {
+    label: '未做',
+    icon: Minus,
+    className: 'text-muted-foreground',
+    bgClass: 'bg-muted hover:bg-muted/80',
+  },
+} as const;
 
 const getStatusClass = (status: QuestionStatus) => {
   switch (status) {
@@ -23,6 +57,8 @@ type ReviewQuestionGridProps = {
   questionTimes?: Record<number, number>;
   onApplyStatus: (questionNumber: number) => void;
   onMarkBatch?: (typeIndex: number, status: QuestionStatus) => void;
+  activeStatus?: QuestionStatus;
+  onActiveStatusChange?: (status: QuestionStatus) => void;
 };
 
 export const ReviewQuestionGrid = ({
@@ -31,6 +67,8 @@ export const ReviewQuestionGrid = ({
   questionTimes,
   onApplyStatus,
   onMarkBatch,
+  activeStatus,
+  onActiveStatusChange,
 }: ReviewQuestionGridProps) => {
   // 按题型分组
   const groupedQuestions = useMemo(() => {
@@ -77,8 +115,54 @@ export const ReviewQuestionGrid = ({
       {groupedQuestions.map((group, groupIndex) => (
         <div key={`group-${groupIndex}`} className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <div className="text-muted-foreground font-medium">
+            <div className="flex items-center gap-2 text-muted-foreground font-medium">
               {group.label}
+              {activeStatus && onActiveStatusChange && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn(
+                        "h-6 gap-1 px-2 text-xs font-normal",
+                        STATUS_CONFIG[activeStatus].className,
+                        STATUS_CONFIG[activeStatus].bgClass
+                      )}
+                    >
+                      <PenTool className="h-3 w-3" />
+                      <span>{STATUS_CONFIG[activeStatus].label}</span>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-1" align="start">
+                    <div className="flex flex-col gap-1">
+                      {(Object.keys(STATUS_CONFIG) as QuestionStatus[]).map(
+                        (status) => {
+                          const config = STATUS_CONFIG[status];
+                          const Icon = config.icon;
+                          return (
+                            <button
+                              key={status}
+                              onClick={() => onActiveStatusChange(status)}
+                              className={cn(
+                                "flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs transition-colors",
+                                activeStatus === status
+                                  ? "bg-accent text-accent-foreground"
+                                  : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              <Icon className={cn("h-3.5 w-3.5", config.className)} />
+                              <span>{config.label}</span>
+                              {activeStatus === status && (
+                                <Check className="ml-auto h-3 w-3 opacity-50" />
+                              )}
+                            </button>
+                          );
+                        }
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
             {onMarkBatch && (
               <div className="flex gap-3">

@@ -281,6 +281,8 @@ const RecordDetailPage = () => {
           questionTimes={questionTimeMap}
           onApplyStatus={applyActiveStatus}
           onMarkBatch={markBatch}
+          activeStatus={activeStatus}
+          onActiveStatusChange={setActiveStatus}
         />
       </div>
     </div>

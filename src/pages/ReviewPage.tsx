@@ -124,6 +124,8 @@ const ReviewPage = () => {
           questionTimes={questionTimes}
           onApplyStatus={applyActiveStatus}
           onMarkBatch={markBatch}
+          activeStatus={activeStatus}
+          onActiveStatusChange={setActiveStatus}
         />
       </div>
     </div>
