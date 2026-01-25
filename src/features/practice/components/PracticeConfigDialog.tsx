@@ -36,6 +36,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Mode, Template } from '@/types';
 import type { PracticeItem } from '@/features/practice/types';
+import { cn } from '@/lib/utils';
 
 type SortableRowProps = {
   item: PracticeItem;
@@ -83,12 +84,12 @@ const SortableRow = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={[
+      className={cn(
         'border-border bg-background flex items-center gap-2 rounded-md border px-2 py-2 transition-colors',
         'hover:border-muted-foreground/40 hover:bg-muted/30',
-        isActive ? 'border-primary/50 bg-primary/5' : '',
-        isDragging ? 'opacity-70 shadow-sm' : '',
-      ].join(' ')}
+        isActive && 'border-primary/50 bg-primary/5',
+        isDragging && 'opacity-70 shadow-sm'
+      )}
       role="button"
       onClick={handleClick}
     >
@@ -96,12 +97,12 @@ const SortableRow = ({
         type="button"
         data-dnd-handle
         aria-label="拖拽调整顺序"
-        className={[
+        className={cn(
           'text-muted-foreground rounded p-1 transition-colors',
           isLocked
             ? 'cursor-not-allowed opacity-40'
-            : 'hover:text-foreground cursor-grab',
-        ].join(' ')}
+            : 'hover:text-foreground cursor-grab'
+        )}
         disabled={isLocked}
         {...attributes}
         {...listeners}

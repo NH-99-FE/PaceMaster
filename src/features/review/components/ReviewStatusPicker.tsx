@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Check, X, ArrowRight, Minus } from 'lucide-react';
 import type { QuestionStatus } from '@/types';
+import { cn } from '@/lib/utils';
 
 const STATUS_OPTIONS: Array<{
   value: QuestionStatus;
@@ -55,11 +56,11 @@ export const ReviewStatusPicker = ({
             key={option.value}
             type="button"
             onClick={() => onChange(option.value)}
-            className={[
+            className={cn(
               'flex items-center justify-between rounded-md border px-3 py-2 text-sm transition-colors',
               option.className,
-              isActive ? 'ring-primary/50 ring-2' : 'hover:border-primary/40',
-            ].join(' ')}
+              isActive ? 'ring-primary/50 ring-2' : 'hover:border-primary/40'
+            )}
           >
             <span className="flex items-center gap-2">
               {option.icon}

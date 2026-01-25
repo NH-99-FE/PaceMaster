@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import type { QuestionStatus } from '@/types';
 import type { ReviewQuestion } from '@/features/review/hooks/useReviewSession';
 import { formatDuration } from '@/utils/time';
+import { cn } from '@/lib/utils';
 
 const getStatusClass = (status: QuestionStatus) => {
   switch (status) {
@@ -110,10 +111,10 @@ export const ReviewQuestionGrid = ({
                   key={`review-q-${item.number}`}
                   type="button"
                   onClick={() => onApplyStatus(item.number)}
-                  className={[
+                  className={cn(
                     'flex h-12 flex-col items-center justify-center rounded border py-1 text-xs transition-colors',
-                    getStatusClass(status),
-                  ].join(' ')}
+                    getStatusClass(status)
+                  )}
                   title={`${item.label} · 第 ${item.number} 题${hasTime ? ` · ${formatDuration(timeMs)}` : ''}`}
                 >
                   <span className="font-medium">{item.number}</span>

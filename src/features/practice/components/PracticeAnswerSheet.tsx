@@ -11,6 +11,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import type { PracticeItem, QuestionGridItem } from '@/features/practice/types';
+import { cn } from '@/lib/utils';
 
 type PracticeAnswerSheetProps = {
   questionGrid: QuestionGridItem[];
@@ -131,23 +132,22 @@ export const PracticeAnswerSheet = ({
                           key={`q-${item.number}`}
                           type="button"
                           onClick={() => handleSelectQuestion(item.number)}
-                          className={[
+                          className={cn(
                             'relative flex h-8 items-center justify-center rounded border text-xs transition-colors',
                             'border-border text-foreground hover:border-muted-foreground/40 hover:bg-muted/30',
-                            isSelected
-                              ? 'border-primary bg-primary/10 text-primary ring-primary/60 ring-2'
-                              : '',
-                            isSkipped ? 'opacity-70' : '',
-                          ].join(' ')}
+                            isSelected &&
+                              'border-primary bg-primary/10 text-primary ring-primary/60 ring-2',
+                            isSkipped && 'opacity-70'
+                          )}
                           title={`${item.label} · 第 ${item.number} 题${isSkipped ? ' · 已跳过' : hasAnswered ? ' · 已作答' : ''}`}
                         >
                           {item.number}
                           {!isSelected && (
                             <>
                               {isSkipped ? (
-                                <AlertCircle className="text-accent absolute top-0.5 right-0.5 h-3 w-3 stroke-[2.5]" />
+                                <AlertCircle className="text-accent absolute top-0.5 right-0.5 h-3 w-3 stroke-[2.5] md:h-2 md:w-2" />
                               ) : hasAnswered ? (
-                                <Check className="text-primary absolute top-0.5 right-0.5 h-3 w-3 stroke-[3]" />
+                                <Check className="text-primary absolute top-0.5 right-0.5 h-3 w-3 stroke-3 md:h-2 md:w-2" />
                               ) : null}
                             </>
                           )}
@@ -165,12 +165,12 @@ export const PracticeAnswerSheet = ({
               key={item.id}
               type="button"
               onClick={() => handleJumpType(index)}
-              className={[
+              className={cn(
                 'flex w-full items-center justify-between rounded-md border px-3 py-2 text-left text-sm transition-colors',
                 index === activeIndex
                   ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border hover:border-muted-foreground/40 hover:bg-muted/30',
-              ].join(' ')}
+                  : 'border-border hover:border-muted-foreground/40 hover:bg-muted/30'
+              )}
             >
               <div>
                 <div className="font-medium">{item.label}</div>
