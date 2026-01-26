@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { QuestionStatus } from '@/types';
 import type { ReviewQuestion } from '@/features/review/hooks/useReviewSession';
-import { formatDuration } from '@/utils/time';
+import { formatDuration, formatMinutesSeconds } from '@/utils/time';
 import { cn } from '@/lib/utils';
 import {
   Popover,
@@ -190,7 +190,7 @@ export const ReviewQuestionGrid = ({
               const status = questionStatus[item.number] ?? 'unanswered';
               const timeMs = questionTimes?.[item.number];
               const hasTime = timeMs !== undefined && timeMs > 0;
-              const seconds = hasTime ? Math.round(timeMs / 1000) : 0;
+              const timeLabel = hasTime ? formatMinutesSeconds(timeMs) : '--';
 
               return (
                 <button
@@ -205,7 +205,7 @@ export const ReviewQuestionGrid = ({
                 >
                   <span className="font-medium">{item.number}</span>
                   <span className="text-muted-foreground mt-0.5 text-[10px] leading-none opacity-80">
-                    {hasTime ? `${seconds}s` : '--'}
+                    {timeLabel}
                   </span>
                 </button>
               );
