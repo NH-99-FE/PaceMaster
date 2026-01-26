@@ -115,7 +115,7 @@ export const ReviewQuestionGrid = ({
       {groupedQuestions.map((group, groupIndex) => (
         <div key={`group-${groupIndex}`} className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-muted-foreground font-medium">
+            <div className="text-muted-foreground flex items-center gap-2 font-medium">
               {group.label}
               {activeStatus && onActiveStatusChange && (
                 <Popover>
@@ -124,7 +124,7 @@ export const ReviewQuestionGrid = ({
                       variant="ghost"
                       size="sm"
                       className={cn(
-                        "h-6 gap-1 px-2 text-xs font-normal",
+                        'h-6 gap-1 px-2 text-xs font-normal',
                         STATUS_CONFIG[activeStatus].className,
                         STATUS_CONFIG[activeStatus].bgClass
                       )}
@@ -136,7 +136,7 @@ export const ReviewQuestionGrid = ({
                   <PopoverContent className="w-auto p-1" align="start">
                     <div className="flex flex-col gap-1">
                       {(Object.keys(STATUS_CONFIG) as QuestionStatus[]).map(
-                        (status) => {
+                        status => {
                           const config = STATUS_CONFIG[status];
                           const Icon = config.icon;
                           return (
@@ -144,13 +144,15 @@ export const ReviewQuestionGrid = ({
                               key={status}
                               onClick={() => onActiveStatusChange(status)}
                               className={cn(
-                                "flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs transition-colors",
+                                'flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs transition-colors',
                                 activeStatus === status
-                                  ? "bg-accent text-accent-foreground"
-                                  : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                                  ? 'bg-accent text-accent-foreground'
+                                  : 'hover:bg-muted text-muted-foreground hover:text-foreground'
                               )}
                             >
-                              <Icon className={cn("h-3.5 w-3.5", config.className)} />
+                              <Icon
+                                className={cn('h-3.5 w-3.5', config.className)}
+                              />
                               <span>{config.label}</span>
                               {activeStatus === status && (
                                 <Check className="ml-auto h-3 w-3 opacity-50" />
