@@ -26,6 +26,8 @@ type PracticeTimerPanelProps = {
   canGoPrev: boolean;
   canGoNext: boolean;
   hasItems: boolean;
+  currentQuestion?: number;
+  totalQuestions?: number;
   onStart: () => void;
   onPauseToggle: () => void;
   onEnd: () => void;
@@ -47,6 +49,8 @@ export const PracticeTimerPanel = ({
   canGoPrev,
   canGoNext,
   hasItems,
+  currentQuestion,
+  totalQuestions,
   onStart,
   onPauseToggle,
   onEnd,
@@ -58,6 +62,12 @@ export const PracticeTimerPanel = ({
   reviewAction,
 }: PracticeTimerPanelProps) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const hasQuestionStats = Boolean(hasItems && totalQuestions);
+  const currentDisplay =
+    hasQuestionStats && currentQuestion && currentQuestion > 0
+      ? currentQuestion
+      : '-';
+  const totalDisplay = hasQuestionStats ? totalQuestions : '-';
 
   const handleStartClick = () => {
     if (isRunning) return;
@@ -71,8 +81,14 @@ export const PracticeTimerPanel = ({
 
   return (
     <Card className="shadow-none">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between gap-3">
         <CardTitle>计时面板</CardTitle>
+        <div className="flex items-center gap-1 rounded-md border border-border/60 bg-muted/20 px-2 py-0.5 text-[11px] text-muted-foreground tabular-nums">
+          <span>题号</span>
+          <span className="text-foreground">{currentDisplay}</span>
+          <span>/</span>
+          <span>{totalDisplay}</span>
+        </div>
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:space-y-0">

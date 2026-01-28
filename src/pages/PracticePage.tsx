@@ -313,6 +313,8 @@ const PracticePage = () => {
           canGoPrev={canGoPrev}
           canGoNext={canGoNext}
           hasItems={hasItems}
+          currentQuestion={currentQuestion}
+          totalQuestions={totalQuestions}
           onStart={handleStart}
           onPauseToggle={() => (isPaused ? actions.resume() : actions.pause())}
           onEnd={handleEnd}
