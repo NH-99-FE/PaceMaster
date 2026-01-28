@@ -223,14 +223,14 @@ export const usePracticeSession = () => {
 
   useEffect(() => {
     if (!activeTemplate?.id) {
-      if (storedQuestion) {
+      if (!isRunning && storedQuestion) {
         actions.setCurrentQuestion(undefined);
       }
       return;
     }
     if (templateItems.length === 0 || order.length === 0) return;
     if (!hasItems || sequence.length === 0) {
-      if (storedQuestion) {
+      if (!isRunning && storedQuestion) {
         actions.setCurrentQuestion(undefined);
       }
       return;
@@ -256,6 +256,7 @@ export const usePracticeSession = () => {
     questionNumberToTemplateId,
     customIndexMap,
     activeIndex,
+    isRunning,
     actions,
     activeTemplate?.id,
     templateItems.length,
