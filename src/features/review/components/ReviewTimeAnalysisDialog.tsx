@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import { formatDuration } from '@/utils/time';
+import { formatDuration, formatMinutesSeconds } from '@/utils/time';
 
 type ModuleTimeData = {
   id: string;
@@ -268,7 +268,7 @@ export const ReviewTimeAnalysisDialog = ({
                     }}
                   >
                     {questionData.map(item => {
-                      const seconds = Math.round(item.actualMs / 1000);
+                      const time = formatMinutesSeconds(item.actualMs);
                       const ratio =
                         item.plannedMs > 0 ? item.actualMs / item.plannedMs : 0;
                       return (
@@ -284,7 +284,7 @@ export const ReviewTimeAnalysisDialog = ({
                         >
                           <span>{item.number}</span>
                           <span className="text-[10px] opacity-80">
-                            {item.actualMs > 0 ? `${seconds}s` : '--'}
+                            {item.actualMs > 0 ? `${time}` : '--'}
                           </span>
                         </div>
                       );
