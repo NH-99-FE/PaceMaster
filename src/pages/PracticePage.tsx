@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -63,6 +63,9 @@ const PracticePage = () => {
   const [configOpen, setConfigOpen] = useState(false);
   const { activeSessionId } = usePracticeSession();
   const [endDialogOpen, setEndDialogOpen] = useState(false);
+  const [defaultNameTimestamp, setDefaultNameTimestamp] = useState<
+    string | null
+  >(null);
   const shouldInitializeRestore = status === 'running' && timers.totalMs > 0;
   const [hasRestorePrompt, setHasRestorePrompt] = useState(
     shouldInitializeRestore
@@ -80,10 +83,20 @@ const PracticePage = () => {
     setRestoreDismissed(true);
   };
 
+  const openEndDialog = () => {
+    setDefaultNameTimestamp(new Date().toISOString());
+    setEndDialogOpen(true);
+  };
+
+  const closeEndDialog = () => {
+    setEndDialogOpen(false);
+    setDefaultNameTimestamp(null);
+  };
+
   // 当练习结束时自动弹出命名弹窗（只在未显示过时弹出）
   useEffect(() => {
     if (status === 'ended' && !endDialogShown) {
-      queueMicrotask(() => setEndDialogOpen(true));
+      queueMicrotask(() => openEndDialog());
     }
   }, [status, endDialogShown]);
 
@@ -123,10 +136,28 @@ const PracticePage = () => {
     handleNextQuestion,
   ]);
 
-  const generateDefaultName = () => {
-    const activeTemplateName = activeTemplate?.name ?? '练习';
-    const now = new Date();
-    return `${activeTemplateName} - ${formatDateTime(now.toISOString())}`;
+  const fallbackTemplateName = useMemo(
+    () =>
+      activeTemplate?.name ??
+      templates.find(tpl => tpl.isDefault)?.name ??
+      templates[0]?.name ??
+      '练习',
+    [activeTemplate?.name, templates]
+  );
+
+  const defaultName = useMemo(() => {
+    if (!defaultNameTimestamp) return '';
+    const formatted = formatDateTime(defaultNameTimestamp);
+    return fallbackTemplateName
+      ? `${fallbackTemplateName} - ${formatted}`
+      : formatted;
+  }, [defaultNameTimestamp, fallbackTemplateName]);
+
+  const generateDefaultName = (timestamp?: string) => {
+    const formatted = formatDateTime(timestamp ?? new Date().toISOString());
+    return fallbackTemplateName
+      ? `${fallbackTemplateName} - ${formatted}`
+      : formatted;
   };
 
   const ensureSessionSaved = async (name?: string) => {
@@ -223,7 +254,7 @@ const PracticePage = () => {
           await sessionRepo.updateSession(activeSessionId, { name });
         }
 
-        setEndDialogOpen(false);
+        closeEndDialog();
         actions.markEndDialogShown();
         toast.success('练习记录已保存');
         return sessionId;
@@ -252,7 +283,7 @@ const PracticePage = () => {
   };
 
   const handleCancelSave = () => {
-    setEndDialogOpen(false);
+    closeEndDialog();
     actions.markEndDialogShown();
   };
 
@@ -359,7 +390,7 @@ const PracticePage = () => {
 
       <PracticeEndDialog
         open={endDialogOpen}
-        defaultName={generateDefaultName()}
+        defaultName={defaultName}
         onSave={handleSaveSession}
         onCancel={handleCancelSave}
       />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   Dialog,
@@ -26,6 +26,27 @@ export const PracticeEndDialog = ({
 }: PracticeEndDialogProps) => {
   const navigate = useNavigate();
   const [name, setName] = useState(defaultName);
+  const prevOpenRef = useRef(open);
+  const prevDefaultNameRef = useRef(defaultName);
+
+  useEffect(() => {
+    const wasOpen = prevOpenRef.current;
+    const prevDefaultName = prevDefaultNameRef.current;
+
+    if (open && !wasOpen) {
+      setName(defaultName);
+    } else if (open) {
+      const shouldSync =
+        name.trim().length === 0 || name === prevDefaultName;
+      if (shouldSync && defaultName !== prevDefaultName) {
+        setName(defaultName);
+      }
+    }
+
+    prevOpenRef.current = open;
+    prevDefaultNameRef.current = defaultName;
+  }, [open, defaultName, name]);
+
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -66,7 +87,7 @@ export const PracticeEndDialog = ({
             <Input
               id="session-name"
               placeholder="输入记录名称"
-              value={defaultName}
+              value={name}
               onChange={e => setName(e.target.value)}
               onKeyDown={e => {
                 if (e.key === 'Enter') {
