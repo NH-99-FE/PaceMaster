@@ -66,7 +66,7 @@ export const PracticeEndDialog = ({
             <Input
               id="session-name"
               placeholder="输入记录名称"
-              value={name}
+              value={defaultName}
               onChange={e => setName(e.target.value)}
               onKeyDown={e => {
                 if (e.key === 'Enter') {

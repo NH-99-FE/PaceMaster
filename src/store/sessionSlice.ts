@@ -175,9 +175,11 @@ export const createSessionSlice: StateCreator<
         set(state => {
           // 重置时保留当前模式，避免用户重复切换。
           const currentMode = state.session.mode;
+          const currentTemplateId = state.session.templateId;
           state.session = {
             ...initialState,
             mode: currentMode,
+            templateId: currentTemplateId,
             actions: state.session.actions,
             activeSessionId: undefined,
           };

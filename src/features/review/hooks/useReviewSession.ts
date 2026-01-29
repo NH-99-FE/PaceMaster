@@ -57,7 +57,10 @@ export const useReviewSession = (sessionId?: string | null) => {
     templates.find(tpl => tpl.id === templateId) ?? templates[0];
 
   useEffect(() => {
-    if (!templateId && templates.length > 0) {
+    if (templates.length === 0) return;
+    const hasTemplate =
+      !!templateId && templates.some(tpl => tpl.id === templateId);
+    if (!hasTemplate) {
       const fallback = templates.find(tpl => tpl.isDefault) ?? templates[0];
       actions.setTemplate(fallback.id);
     }
