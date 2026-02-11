@@ -71,7 +71,6 @@ export const PracticeTimerPanel = ({
 
   const handleStartClick = () => {
     if (isRunning) return;
-    // 重新开始直接执行，避免重复确认。
     if (status === 'ended') {
       onStart();
       return;

@@ -331,6 +331,7 @@ export const usePracticeSession = () => {
   const handleStart = () => {
     if (status === 'ended') {
       actions.reset();
+      return;
     }
     actions.start();
   };
